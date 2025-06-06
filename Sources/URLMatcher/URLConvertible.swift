@@ -42,6 +42,11 @@ extension String: URLConvertible {
     if let url = URL(string: self) {
       return url
     }
+      
+    if let url = URLMatcher.urlParser?(self) {
+        return url
+    }
+      
     var set = CharacterSet()
     set.formUnion(.urlHostAllowed)
     set.formUnion(.urlPathAllowed)

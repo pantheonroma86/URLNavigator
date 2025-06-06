@@ -7,6 +7,11 @@ open class URLMatcher {
   public typealias URLPattern = String
   public typealias URLValueConverter = (_ pathComponents: [String], _ index: Int) -> Any?
 
+    /// Optional custom parser for path components.
+  public static var urlPathComponentParser: ((String) -> URLPathComponent?)?
+    
+  public static var urlParser: ((String) -> URL?)?
+    
   static let defaultURLValueConverters: [String: URLValueConverter] = [
     "string": { pathComponents, index in
       return pathComponents[index]

@@ -1,15 +1,21 @@
-enum URLPathComponent {
+public enum URLPathComponent {
   case plain(String)
   case placeholder(type: String?, key: String)
 }
 
 extension URLPathComponent {
-  init(_ value: String) {
+    public init(_ value: String) {
+    
+    if let custom = URLMatcher.urlPathComponentParser?(value) {
+       self = custom
+       return
+     }
+
     if value.hasPrefix("<") && value.hasSuffix(">") {
       let start = value.index(after: value.startIndex)
       let end = value.index(before: value.endIndex)
-      let placeholder = value[start..<end] // e.g. "<int:id>" -> "int:id"
-      let typeAndKey = placeholder.components(separatedBy: ":")
+      let placeholder = value[start..<end] // e.g. "<int|id>" -> "int|id"
+      let typeAndKey = placeholder.components(separatedBy: "|")
       if typeAndKey.count == 1 { // any-type placeholder
         self = .placeholder(type: nil, key: typeAndKey[0])
       } else if typeAndKey.count == 2 {
@@ -24,7 +30,7 @@ extension URLPathComponent {
 }
 
 extension URLPathComponent: Equatable {
-  static func == (lhs: URLPathComponent, rhs: URLPathComponent) -> Bool {
+   public  static func == (lhs: URLPathComponent, rhs: URLPathComponent) -> Bool {
     switch (lhs, rhs) {
     case let (.plain(leftValue), .plain(rightValue)):
       return leftValue == rightValue
