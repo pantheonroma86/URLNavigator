@@ -7,7 +7,8 @@ import URLMatcher
 
 public protocol NavigatorProtocol: AnyObject {
   var delegate: NavigatorDelegate? { get set }
-
+  var interceptOriginURL: ((URLConvertible) -> URLConvertible?)? { get set }
+    
   func register(_ pattern: URLPattern, _ factory: @escaping ViewControllerFactory)
   func handle(_ pattern: URLPattern, _ factory: @escaping URLOpenHandlerFactory)
 

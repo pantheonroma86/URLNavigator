@@ -26,6 +26,17 @@ enum NavigationMap {
       print("[Navigator] NavigationMap.\(#function):\(#line) - global fallback function is called")
       return true
     }
+      
+      
+//      navigator.interceptOriginURL = { targetUrl in
+//          
+//          print("targetUrl:\(targetUrl)")
+//          
+//          return targetUrl
+//      }
+//      
+      
+      
   }
 
   private static func webViewControllerFactory(

@@ -19,9 +19,10 @@ open class Navigator: NavigatorProtocol {
 
   private var viewControllerFactories = [URLPattern: ViewControllerFactory]()
   private var handlerFactories = [URLPattern: URLOpenHandlerFactory]()
-
-
-  // MARK: Initializing
+  
+  public var interceptOriginURL: ((URLConvertible) -> URLConvertible?)?
+  
+    // MARK: Initializing
 
   public init() {
     // ⛵ I'm a Navigator!
@@ -74,7 +75,16 @@ open class Navigator: NavigatorProtocol {
   ///         an URL, so it's recommended to implement this method only for mocking.
   @discardableResult
   open func push(_ url: URLConvertible, context: Any? = nil, from: UINavigationControllerType? = nil, animated: Bool = true) -> UIViewController? {
-    guard let viewController = self.viewController(for: url, context: context) else { return nil }
+      var tUrl = url
+      
+      if let tmpInterceptOriginURL = self.interceptOriginURL {
+          if let dummyUrl = tmpInterceptOriginURL(url) {
+              tUrl = dummyUrl
+          } else {
+              return nil
+          }
+      }
+    guard let viewController = self.viewController(for: tUrl, context: context) else { return nil }
     return self.push(viewController, from: from, animated: animated)
   }
 
@@ -102,7 +112,17 @@ open class Navigator: NavigatorProtocol {
   ///         an URL, so it's recommended to implement this method only for mocking.
   @discardableResult
   open func present(_ url: URLConvertible, context: Any? = nil, wrap: UINavigationController.Type? = nil, from: UIViewControllerType? = nil, animated: Bool = true, completion: (() -> Void)? = nil) -> UIViewController? {
-    guard let viewController = self.viewController(for: url, context: context) else { return nil }
+      
+      var tUrl = url
+      
+      if let tmpInterceptOriginURL = self.interceptOriginURL {
+          if let dummyUrl = tmpInterceptOriginURL(url) {
+              tUrl = dummyUrl
+          } else {
+              return nil
+          }
+      }
+    guard let viewController = self.viewController(for: tUrl, context: context) else { return nil }
     return self.present(viewController, wrap: wrap, from: from, animated: animated, completion: completion)
   }
 
@@ -137,7 +157,16 @@ open class Navigator: NavigatorProtocol {
   ///         recommended to implement this method only for mocking.
   @discardableResult
   open func open(_ url: URLConvertible, context: Any? = nil) -> Bool {
-    guard let handler = self.handler(for: url, context: context) else { return false }
+      var tUrl = url
+      
+      if let tmpInterceptOriginURL = self.interceptOriginURL {
+          if let dummyUrl = tmpInterceptOriginURL(url) {
+              tUrl = dummyUrl
+          } else {
+              return false
+          }
+      }
+    guard let handler = self.handler(for: tUrl, context: context) else { return false }
     return handler()
   }
 }
